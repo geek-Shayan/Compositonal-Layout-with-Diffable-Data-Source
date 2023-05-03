@@ -13,6 +13,9 @@
 		1AD319842A023F1D00714211 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD319822A023F1D00714211 /* Main.storyboard */; };
 		1AD319862A023F1F00714211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD319852A023F1F00714211 /* Assets.xcassets */; };
 		1AD319892A023F1F00714211 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD319872A023F1F00714211 /* LaunchScreen.storyboard */; };
+		1AD319912A02408200714211 /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD319902A02408200714211 /* CustomCollectionViewCell.swift */; };
+		1AD319932A0240BA00714211 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD319922A0240BA00714211 /* HeaderCollectionReusableView.swift */; };
+		1AD319952A0240FF00714211 /* FooterCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD319942A0240FF00714211 /* FooterCollectionReusableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		1AD319852A023F1F00714211 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1AD319882A023F1F00714211 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1AD3198A2A023F1F00714211 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AD319902A02408200714211 /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
+		1AD319922A0240BA00714211 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		1AD319942A0240FF00714211 /* FooterCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterCollectionReusableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +65,9 @@
 				1AD3197C2A023F1D00714211 /* AppDelegate.swift */,
 				1AD3197E2A023F1D00714211 /* SceneDelegate.swift */,
 				1AD319802A023F1D00714211 /* ViewController.swift */,
+				1AD319902A02408200714211 /* CustomCollectionViewCell.swift */,
+				1AD319942A0240FF00714211 /* FooterCollectionReusableView.swift */,
+				1AD319922A0240BA00714211 /* HeaderCollectionReusableView.swift */,
 				1AD319822A023F1D00714211 /* Main.storyboard */,
 				1AD319852A023F1F00714211 /* Assets.xcassets */,
 				1AD319872A023F1F00714211 /* LaunchScreen.storyboard */,
@@ -141,6 +150,9 @@
 				1AD319812A023F1D00714211 /* ViewController.swift in Sources */,
 				1AD3197D2A023F1D00714211 /* AppDelegate.swift in Sources */,
 				1AD3197F2A023F1D00714211 /* SceneDelegate.swift in Sources */,
+				1AD319932A0240BA00714211 /* HeaderCollectionReusableView.swift in Sources */,
+				1AD319952A0240FF00714211 /* FooterCollectionReusableView.swift in Sources */,
+				1AD319912A02408200714211 /* CustomCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
