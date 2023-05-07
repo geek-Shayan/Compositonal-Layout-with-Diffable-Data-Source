@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 class ViewController: UIViewController {
     
@@ -15,38 +16,14 @@ class ViewController: UIViewController {
     private let itemsPerPage = 10 // loads 10 data per page cycle
     private var currentPage = 0
     
-    private var sectionHeadersFooters: [SupplementaryDataType] = [SupplementaryDataType(header: "", footer: ""),
+    private var sectionHeadersFooters: [SupplementaryDataType] = [SupplementaryDataType(header: "Cards", footer: ""),
                                                                   SupplementaryDataType(header: "Categories header", footer: "Categories footer"),
                                                                   SupplementaryDataType(header: "Latest header", footer: "Latest footer"),
                                                                   SupplementaryDataType(header: "", footer: ""),
                                                                   SupplementaryDataType(header: "Card header", footer: "")]
     
     
-    private var sectionData0: [CellDataType] = [CellDataType(image: "photo 1 s1", label: "Food"),
-                                                CellDataType(image: "photo 4 s1", label: "Fresh"),
-                                                CellDataType(image: "photo 2 s1", label: "Food"),
-                                                CellDataType(image: "photo 4 s1", label: "Fresh")]
-    
-    private var sectionData1: [CellDataType] = [CellDataType(image: "burger 1 s2", label: "Burger 1"),
-                                                CellDataType(image: "burger 2 s2", label: "Burger 2"),
-                                                CellDataType(image: "burger 1 s2", label: "Burger 3"),
-                                                CellDataType(image: "burger 2 s2", label: "Burger 4"),
-                                                CellDataType(image: "burger 1 s2", label: "Burger 5"),
-                                                CellDataType(image: "burger 2 s2", label: "Burger 6"),
-                                                CellDataType(image: "burger 1 s2", label: "Burger 7"),
-                                                CellDataType(image: "burger 2 s2", label: "Burger 8")]
-    
-    private var sectionData2: [CellDataType] = [CellDataType(image: "pasta 1 s3", label: "Pasta 1"),
-                                                CellDataType(image: "spaghetti s3", label: "Spaghetti 2"),
-                                                CellDataType(image: "pasta 2 s3", label: "Pasta 3"),
-                                                CellDataType(image: "friedRice s3", label: "Fried Rice 4")]
-    
-    private var sectionData3: [CellDataType] = [CellDataType(image: "pizza s4", label: "Pizza 1"),
-                                                CellDataType(image: "spaghetti s3", label: "Spaghetti 2"),
-                                                CellDataType(image: "pasta 2 s3", label: "Pasta 3"),
-                                                CellDataType(image: "friedRice s3", label: "Fried Rice 4")]
-    
-    private var sectionData4: [CellDataType] = [CellDataType(image: "swarma s5", label: "Swarma 1"),
+    private var sectionData: [CellDataType] = [CellDataType(image: "swarma s5", label: "Swarma 1"),
                                                 CellDataType(image: "chickenFries s5", label: "Chicken Fry 2"),
                                                 CellDataType(image: "kabab s5", label: "Kabab 3"),
                                                 CellDataType(image: "swarma s5", label: "Swarma 4"),
@@ -167,14 +144,14 @@ class ViewController: UIViewController {
                                                 CellDataType(image: "chickenFries s5", label: "Chicken Fry 119"),
                                                 CellDataType(image: "kabab s5", label: "Kabab 120")]
     
+    // MARK: - properties
     
-    var celldata: [CellDataType] = [] {
-        didSet {
-            collectionView.reloadData()
-        }
+    enum Section: Int {
+        case first
+        case second
     }
-    
-    
+
+
     struct CellDataType: Hashable {
         let image: String
         let label: String
@@ -186,177 +163,165 @@ class ViewController: UIViewController {
         let footer: String
     }
     
-        // MARK: - diff datasources properties
-    #warning("fjshshfbvhs")
     
-        // MARK: - properties
+    @Published private var celldata: [CellDataType] = []
+    private var cancellables = Set<AnyCancellable>()
     
-    enum Section {
-        case first
-        case second
-    }
+    // MARK: - diff datasources properties
     
-    var collecttionDatasource: UICollectionViewDiffableDataSource<Section, CellDataType>!
-//    var tableDatasource: UITableViewDiffableDataSource<Section, Fruit>!
+    private var collectionDatasource: UICollectionViewDiffableDataSource<Section, CellDataType>!
     
     
-    static let cellIdentifier = "cell"
     static let headerKind = "headerKind"
     static let footerKind = "footerKind"
-        //    static let headerIdentifier = "header"
+    
     
     private let collectionView: UICollectionView = {
-            //        let layout = UICollectionViewFlowLayout()
-            //        layout.scrollDirection = .vertical
         
         let layout = UICollectionViewCompositionalLayout { sectionNumber, env in
             
-            if (sectionNumber == 0) {
-                
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
-                item.contentInsets.trailing = 2
-                item.contentInsets.bottom = 16
-                
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200)), subitems: [item])
-                    //            (layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(300)), subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .paging
-                
-                return section
-            }
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200)))
+            item.contentInsets.trailing = 16
+            item.contentInsets.bottom = 8
             
-            else if (sectionNumber == 1) {
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.25), heightDimension: .absolute(150)))
-                item.contentInsets.trailing = 16
-                item.contentInsets.bottom = 16
-                
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(500)), subitems: [item])
-                    //                group.contentInsets.leading = 16
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets.leading = 16
-                
-                let footerHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .absolute(50))
-                let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: headerKind, alignment: .topLeading)
-                    //                let footer = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: footerKind, alignment: .bottom)
-                
-                section.boundarySupplementaryItems = [header] //, footer
-                
-                return section
-            }
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1000)), subitems: [item])
             
-            else if (sectionNumber == 2) {
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)))
-                item.contentInsets.trailing = 32
-                
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.80), heightDimension: .absolute(120)), subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous
-                section.contentInsets.leading = 16
-                
-                let footerHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .absolute(50))
-                let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: headerKind, alignment: .topLeading)
-                    //                let footer = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: footerKind, alignment: .bottomLeading)
-                
-                section.boundarySupplementaryItems = [header] //, footer
-                
-                return section
-            }
+            let section = NSCollectionLayoutSection(group: group)
+            section.contentInsets = .init(top: 0, leading: 16, bottom: -8, trailing: 0)
             
-            else if (sectionNumber == 3) {
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .absolute(200)))
-                item.contentInsets.trailing = 16
-                item.contentInsets.bottom = 16
-                
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1000)), subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                    //                section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
-                section.contentInsets = .init(top: 32, leading: 16, bottom: 0, trailing: 0)
-                
-                    //                let footerHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .absolute(50))
-                    //                let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: headerKind, alignment: .top)
-                    //                let footer = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: footerKind, alignment: .bottom)
-                    //
-                    //                section.boundarySupplementaryItems = [header, footer]
-                
-                return section
-            }
+            let footerHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .absolute(50))
+            let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: headerKind, alignment: .topTrailing)
+            let footer = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: footerKind, alignment: .bottomTrailing)
             
-            else {
-                let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200)))
-                item.contentInsets.trailing = 16
-                item.contentInsets.bottom = 8
-                
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(1000)), subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = .init(top: 0, leading: 16, bottom: -8, trailing: 0)
-                
-                let footerHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),heightDimension: .absolute(50))
-                let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: headerKind, alignment: .topTrailing)
-                let footer = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: footerHeaderSize, elementKind: footerKind, alignment: .bottomTrailing)
-                
-                section.boundarySupplementaryItems = [header, footer]
-                
-                return section
-            }
+            section.boundarySupplementaryItems = [header, footer]
+            
+            return section
         }
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: ViewController.cellIdentifier)
         collection.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
-            //        collection.register(UICollectionReusableView.self, forSupplementaryViewOfKind: ViewController.headerKind, withReuseIdentifier: ViewController.headerIdentifier)
         collection.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: ViewController.headerKind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier)
         collection.register(FooterCollectionReusableView.self, forSupplementaryViewOfKind: ViewController.footerKind, withReuseIdentifier: FooterCollectionReusableView.footerIdentifier)
         
         return collection
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.delegate = self
-//        collectionView.dataSource = self
+        observe()
         
-        
-        collectionView.backgroundColor = .clear
-            //        collectionView.backgroundColor = .darkGray
         navigationItem.title = "FOOD DELIVERY"
         
-        view.addSubview(collectionView)
+        collectionViewDidLoad()
         
-        loadData(page: currentPage)
+        configure()
+        
+        loadDatasource(page: currentPage)
+        
     }
     
-    private func loadData(page: Int) {
-        isLoading = true
+    
+    func collectionViewDidLoad() {
+        collectionView.delegate = self
         
-        if sectionData4.isEmpty {
-                //            fatalError("Null data error!")
-            print("Null data error!")
+//        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .darkGray
+        
+        view.addSubview(collectionView)
+           
+    }
+    
+    private func observe() {
+        $celldata.filter { !$0.isEmpty }.receive(on: DispatchQueue.main).sink { [weak self] products in
+            self?.updateSnapshot()
+        }.store(in: &cancellables)
+    }
+    
+    
+//#warning("configure head test")
+    
+    func configure() {
+        collectionDatasource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
+            cell.setup(with: itemIdentifier.image, and: itemIdentifier.label)
+            print(itemIdentifier.image, itemIdentifier.label)
+            return cell
+        })
+        
+        collectionDatasource.supplementaryViewProvider = { [self] collectionView, kind, indexPath in
+                //             print("collectionView",collectionView,"indexPath", indexPath, "kind", kind )
+            switch kind {
+                case ViewController.headerKind:
+                    let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier, for: indexPath) as! HeaderCollectionReusableView
+                    header.setup(head: sectionHeadersFooters[indexPath.section].header)
+                    return header
+                    
+                case ViewController.footerKind:
+                    let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FooterCollectionReusableView.footerIdentifier, for: indexPath) as! FooterCollectionReusableView
+                    footer.setup(foot: sectionHeadersFooters[indexPath.section].footer, indicatorFlag: isLoading) // isLoading
+                    return footer
+                    
+                default :
+                    let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier, for: indexPath) as! HeaderCollectionReusableView
+                    header.setup(head: "Default header")
+                    return header
+            }
         }
-        else {
+    }
+    
+    
+    // MARK: - datasource management
+    
+    func loadDatasource(page: Int) {
+        
+        if sectionData.count > (currentPage*itemsPerPage) {
+            
+            isLoading = true
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 self?.isLoading = false
                 self?.currentPage += 1
                 let newData = (page * (self?.itemsPerPage)!)..<((page + 1) * (self?.itemsPerPage)!)
                 print("newData", newData)
                 
-                self?.celldata.append(contentsOf: newData.map{ (self?.sectionData4[$0])! })
-                self?.isLastPage = newData.upperBound >= (self?.sectionData4.count)! // Assumes 100 total items //sectionData4.count
-                
-                    //                self?.collectionView.reloadSections(IndexSet(integer: 4))
-                    //                self?.collectionView.reloadData()
+                self?.celldata.append(contentsOf: newData.map{ (self?.sectionData[$0] ?? CellDataType(image: "photo.artframe", label: "loading")) })
+                self?.isLastPage = newData.upperBound >= (self?.sectionData.count)! // Assumes 100 total items //sectionData.count
             }
         }
-            //        collectionView.reloadSections(IndexSet(integer: 4))
-        collectionView.reloadData()
+        else {
+            isLoading = false
+            isLastPage = true
+        }
         
+        
+        var initialSnapshot = NSDiffableDataSourceSnapshot<Section, CellDataType>()
+        initialSnapshot.appendSections([.first])
+        initialSnapshot.appendItems(celldata, toSection: .first)
+
+        collectionView.reloadData()
+
         print("celldata", celldata)
+
+        collectionDatasource.apply(initialSnapshot, animatingDifferences: true)
+
     }
+    
+    
+    func updateSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, CellDataType>()
+        snapshot.appendSections([.first])
+        snapshot.appendItems(celldata, toSection: .first)
+
+        collectionView.reloadData()
+
+        print("celldata", celldata)
+
+        collectionDatasource.apply(snapshot, animatingDifferences: true)
+
+    }
+    
     
     override func viewDidLayoutSubviews() {
         collectionView.frame = view.bounds
@@ -383,133 +348,8 @@ extension ViewController: UIScrollViewDelegate {
         
         print(offsetY, contentHeight, height)
         if offsetY > contentHeight - height {
-            loadData(page: currentPage)
+            loadDatasource(page: currentPage)
         }
-    }
-}
-
-
-
-extension ViewController: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sectionHeadersFooters.count
-            //        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
-            return sectionData0.count
-                //            return 3
-        }
-        else if section == 1 {
-            return sectionData1.count
-                //            return 8
-        }
-        else if section == 2 {
-            return sectionData2.count
-                //            return 6
-        }
-        else if section == 3 {
-            return sectionData3.count
-                //            return 4
-        }
-        else {
-            return celldata.count
-                //            return sectionData4.count
-                //            return 5
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-            //        print("supp indexPath row, section, item", indexPath.row, indexPath.section, indexPath.item)
-        switch kind {
-            case ViewController.headerKind:
-                let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier, for: indexPath) as! HeaderCollectionReusableView
-                header.setup(head: sectionHeadersFooters[indexPath.section].header)
-                    //                print(indexPath.section)
-                return header
-                
-                    //                if indexPath.section == 1 {
-                    //                    let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier, for: indexPath) as! HeaderCollectionReusableView
-                    //                    header.setup(head: "Categories header")
-                    //                    return header
-                    //                }
-                
-            case ViewController.footerKind:
-                if indexPath.section == 4 {
-                    let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FooterCollectionReusableView.footerIdentifier, for: indexPath) as! FooterCollectionReusableView
-                    footer.setup(foot: sectionHeadersFooters[indexPath.section].footer, indicatorFlag: isLoading) // isLoading
-                    return footer
-                }
-                else {
-                    let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FooterCollectionReusableView.footerIdentifier, for: indexPath) as! FooterCollectionReusableView
-                    footer.setup(foot: sectionHeadersFooters[indexPath.section].footer, indicatorFlag: false)
-                    return footer
-                }
-                
-                
-                    //                if indexPath.section == 1 {
-                    //                    let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FooterCollectionReusableView.footerIdentifier, for: indexPath) as! FooterCollectionReusableView
-                    //                    footer.setup(foot: "Categories footer", indicatorFlag: false)
-                    //                    return footer
-                    //                }
-                    
-                
-            default :
-                let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionReusableView.headerIdentifier, for: indexPath) as! HeaderCollectionReusableView
-                header.setup(head: "Default header")
-                return header
-        }
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            //        print("Cell indexPath row, section, item", indexPath.row, indexPath.section, indexPath.item)
-        
-        if indexPath.section == 0 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: sectionData0[indexPath.item].image, and: sectionData0[indexPath.item].label)
-            return cell
-        }
-        
-        if indexPath.section == 1 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: sectionData1[indexPath.item].image, and: sectionData1[indexPath.item].label)
-            return cell
-        }
-        
-        if indexPath.section == 2 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: sectionData2[indexPath.item].image, and: sectionData2[indexPath.item].label)
-            return cell
-        }
-        
-        if indexPath.section == 3 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: sectionData3[indexPath.item].image, and: sectionData3[indexPath.item].label)
-            return cell
-        }
-        
-        if indexPath.section == 4 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: celldata[indexPath.item].image, and: celldata[indexPath.item].label) //dynamic
-            return cell
-        }
-        
-        else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ViewController.cellIdentifier, for: indexPath)
-            cell.backgroundColor = .orange
-            return cell
-        }
-        
-        
-            //        if indexPath.section == 0 && indexPath.item == 0 {
-            //            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            //            cell.setup(with: "photo 1 s1", and: "Food")
-            //            return cell
-            //        }
-            
-        
     }
 }
 
