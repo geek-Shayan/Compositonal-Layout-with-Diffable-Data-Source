@@ -245,7 +245,7 @@ class ViewController: UIViewController {
     func configure() {
         collectionDatasource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath) as! CustomCollectionViewCell
-            cell.setup(with: itemIdentifier.image, and: itemIdentifier.label)
+            cell.setup(img: itemIdentifier.image, lbl: itemIdentifier.label)
             print(itemIdentifier.image, itemIdentifier.label)
             return cell
         })

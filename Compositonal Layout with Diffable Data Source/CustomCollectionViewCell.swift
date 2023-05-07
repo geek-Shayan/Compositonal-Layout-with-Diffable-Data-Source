@@ -55,7 +55,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
         myLabel.frame = bounds
     }
     
-    func setup(with img: String, and lbl: String) {
+    func setup(img: String,lbl: String) {
         myImage.image = UIImage(named: img)
         myLabel.text = lbl
     }
