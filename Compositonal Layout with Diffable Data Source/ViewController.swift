@@ -175,7 +175,7 @@ class ViewController: UIViewController {
     static let headerKind = "headerKind"
     static let footerKind = "footerKind"
     
-    
+    //bdfvx
     private let collectionView: UICollectionView = {
         
         let layout = UICollectionViewCompositionalLayout { sectionNumber, env in
